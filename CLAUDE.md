@@ -55,6 +55,9 @@ Excalidraw scene one slide at a time via `edit_scene_content`.
 - `tempId` references only resolve **inside a single `edit_scene_content` call**.
   Once a frame is persisted, later calls must use its real `id` as `frameId`,
   and arrows must bind to real element `id`s.
+- The `take_screenshot` MCP render does not show floating `text` elements; it
+  only renders shape-owned labels, lines, and rectangles. To verify text, open
+  the scene in the Excalidraw app or use `search_scene_content`.
 
 ## Talk structure (17 slides)
 
