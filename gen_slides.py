@@ -60,6 +60,10 @@ def line(i, x, y, pts, stroke=INK, rough=1, width=2):
             "points":pts,"roughness":rough,"strokeColor":stroke,"strokeWidth":width,
             "frameId":f"s{i}"}
 
+def pageno(i, total=17):
+    return {"type":"text","x":sx(i)+W-90,"y":590,"width":60,"height":22,
+            "text":f"{i} / {total}","fontSize":18,"fontFamily":5,"strokeColor":"#495057","frameId":f"s{i}"}
+
 slides = {}
 
 # 1 — Title (single hero block)
@@ -75,7 +79,7 @@ s.append(txt(i,56,278,W-112,80,
     "Vaswani · Shazeer · Parmar · Uszkoreit · Jones · Gomez · Kaiser · Polosukhin\nGoogle Brain / Research — NeurIPS 2017",
     size=17,fam=5,color=SUB))
 s.append(txt(i,56,H-90,W-112,40,"arxiv.org/abs/1706.03762",size=16,fam=8,color=GRAY_ST))
-slides[i]=s
+s.append(pageno(i)); slides[i]=s
 
 # 2 — Recurrence is sequential (one chain)
 i=2; s=[]
@@ -99,7 +103,7 @@ for j in range(cells-1):
 s.append(txt(i,cx0+cells*step-cw+30,cy+10,140,30,
     "wait",size=16,fam=5,color=RED_ST))
 s.append(cap(i,"each step waits on the last — no parallelism across the sequence",size=15))
-slides[i]=s
+s.append(pageno(i)); slides[i]=s
 
 # 3 — Self-attention: everything sees everything (complete directed graph)
 i=3; s=[]
@@ -131,7 +135,7 @@ for b in range(nodes):
 s.append(txt(i,nx0+2*nstep-10,ny-44,260,28,
     "this token attends to every token",size=16,fam=5,color=ORANGE_ST))
 s.append(cap(i,"one step · the same is true for every other token in the sequence"))
-slides[i]=s
+s.append(pageno(i)); slides[i]=s
 
 # 4 — Scaled dot-product attention (single pipeline + formula)
 i=4; s=[]
@@ -154,7 +158,7 @@ for j in range(len(bids)-1):
     s.append(arr(i,bx0+j*step+bw,by+bh/2,[[0,0],[step-bw,0]],
         start=(bids[j],[1,0.5]),end=(bids[j+1],[0,0.5]),stroke=INK,rough=0))
 s.append(cap(i,"dot-products give similarity → softmax gives weights → multiply by values",y=H-70))
-slides[i]=s
+s.append(pageno(i)); slides[i]=s
 
 # 5 — Multi-head: parallel views (fan-out / fan-in)
 i=5; s=[]
@@ -193,7 +197,7 @@ for j,hid in enumerate(hids):
 s.append(arr(i,700,225,[[0,0],[40,0]],start=("cat5",[1,0.5]),end=("lin5",[0,0.5]),stroke=INK,rough=0))
 s.append(arr(i,810,260,[[0,0],[0,30]],start=("lin5",[0.5,1]),end=("out5",[0.5,0]),stroke=INK,rough=0))
 s.append(txt(i,56,H-80,300,30,"h = 8 heads · d_k = d_v = 64 · d_model = 512",size=15,fam=8,color=SUB))
-slides[i]=s
+s.append(pageno(i)); slides[i]=s
 
 # 6 — Positional encoding (waves)
 i=6; s=[]
@@ -211,10 +215,9 @@ def wave(amp, freq, phase, yoff, kind="sin", steps=80, x0=80, x1=W-80, ybase=320
         xx=(x1-x0)*t
         fn=math.sin if kind=="sin" else math.cos
         yy=yoff - amp*fn(freq*xx*0.05+phase)
-        pts.append([round(xx,1),round(yy-ybase,1)])
+        pts.append([round(xx,1),round(yy,1)])
     return pts
-# We'll place waves relative to a local origin at (x0, ybase). line() uses sx(i)+x.
-# Use absolute local coords: origin (x0=80,ybase=320)
+# Waves oscillate around the axis at local y = ybase.
 x0=80; ybase=320
 def line_wave(i, pts, stroke, width=2):
     return {"type":"line","x":sx(i)+x0,"y":Y+ybase,"width":pts[-1][0],"height":(max(p[1] for p in pts)-min(p[1] for p in pts)),
@@ -227,11 +230,11 @@ s.append(line(i,x0-10,ybase,[[0,0],[W-80-x0+10,0]],stroke=GRAY_ST,rough=1,width=
 s.append(txt(i,56,150,W-112,40,
     "PE(pos,2i)=sin(pos/10000^(2i/d))    PE(pos,2i+1)=cos(pos/10000^(2i/d))",
     size=18,fam=8,color=INK))
-s.append(txt(i,80,460,220,24,"sin · low freq",size=14,fam=5,color=BLUE_ST))
-s.append(txt(i,300,460,220,24,"cos · mid freq",size=14,fam=5,color=ORANGE_ST))
-s.append(txt(i,540,460,220,24,"sin · high freq",size=14,fam=5,color=VIOLET_ST))
-s.append(cap(i,"added to input embeddings to inject order"))
-slides[i]=s
+s.append(txt(i,80,440,220,24,"sin · low freq",size=14,fam=5,color=BLUE_ST))
+s.append(txt(i,300,440,220,24,"cos · mid freq",size=14,fam=5,color=ORANGE_ST))
+s.append(txt(i,540,440,220,24,"sin · high freq",size=14,fam=5,color=VIOLET_ST))
+s.append(txt(i,56,H-60,W-112,40,"added to input embeddings to inject order",size=16,fam=5,color=SUB))
+s.append(pageno(i)); slides[i]=s
 
 # 7 — Architecture (encoder-decoder sketch)
 i=7; s=[]
@@ -269,7 +272,7 @@ s.append(arr(i,dx+dw/2,446,[[0,0],[0,16]],start=("dec_ffn",[0.5,1]),end=("head",
 s.append(arr(i,ex+ew,352,[[0,0],[dx-(ex+ew),326-352+26]],
     start=("enc_ffn",[1,0.5]),end=("dec_ca",[0,0.5]),stroke=BLUE_ST,rough=0))
 s.append(txt(i,ex+ew+10,300,90,24,"K, V",size=13,fam=8,color=BLUE_ST))
-slides[i]=s
+s.append(pageno(i)); slides[i]=s
 
 # 8 — Results (metric callouts)
 i=8; s=[]
@@ -285,7 +288,7 @@ s.append(rect("m2",i,345,170,270,180,BLUE_BG,BLUE_ST,
 s.append(rect("m3",i,634,170,270,180,ORANGE_BG,ORANGE_ST,
     "3.5 days\n8 GPUs\ntraining cost",lsize=26,lfam=7,rough=0))
 s.append(cap(i,"state of the art on two translation benchmarks, at a fraction of the training cost"))
-slides[i]=s
+s.append(pageno(i)); slides[i]=s
 
 # 9 — Why it matters (one statement + chips)
 i=9; s=[]
@@ -302,7 +305,7 @@ for j,c in enumerate(chips):
     s.append(rect(f"c{j}",i,cx0+j*step,cy,cw,ch,BLUE_LITE,BLUE_ST,
         label=c,lsize=18,lfam=7,rough=0))
 s.append(cap(i,"one idea, one paper, a decade of AI that followed",y=H-70))
-slides[i]=s
+s.append(pageno(i)); slides[i]=s
 
 os.makedirs("/tmp/slides",exist_ok=True)
 for i,s in slides.items():

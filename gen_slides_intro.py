@@ -46,8 +46,8 @@ def txt(i, x, y, w, h, t, size=18, fam=5, color=INK):
 
 def pageno(i, label):
     """Bottom-right page number, e.g. '10 / 17'."""
-    return {"type": "text", "x": sx(i) + W - 90, "y": Y + H - 32, "width": 60, "height": 22,
-            "text": label, "fontSize": 14, "fontFamily": 5, "strokeColor": GRAY_ST, "frameId": f"s{i}"}
+    return {"type": "text", "x": sx(i) + W - 90, "y": 590, "width": 60, "height": 22,
+            "text": label, "fontSize": 18, "fontFamily": 5, "strokeColor": "#495057", "frameId": f"s{i}"}
 
 def rect(tid, i, x, y, w, h, bg, st, label=None, lsize=18, lfam=7, rough=1):
     e = {"type": "rectangle", "tempId": tid, "x": sx(i) + x, "y": Y + y, "width": w, "height": h,
