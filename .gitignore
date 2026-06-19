@@ -1,0 +1,5 @@
+# Paper source — keep the markdown, not the binary PDF
+*.pdf
+
+# Local virtualenv used for PDF conversion
+.venv/
