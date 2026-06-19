@@ -19,10 +19,10 @@ assets/attention_is_all_you_need.pdf   # gitignored source
 assets/attention_is_all_you_need.md    # pymupdf-extracted text
 gen_slides.py                          # builds slides 1-9 (core paper)
 gen_slides_intro.py                    # builds slides 10-17 (background + follow-ups)
-/tmp/slides/slideN.json                # one JSON file per slide (intermediate)
+slides/slideN.json                       # one JSON file per slide (intermediate)
 ```
 
-Both scripts write `/tmp/slides/slideN.json`. Each file is then pushed to the
+Both scripts write `slides/slideN.json`. Each file is then pushed to the
 Excalidraw scene one slide at a time via `edit_scene_content`.
 
 ## Excalidraw MCP findings
