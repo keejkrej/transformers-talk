@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transformers Talk — Excalidraw Viewer</title>
+    <script>
+      // Point Excalidraw to its font/image assets on the CDN
+      window.EXCALIDRAW_ASSET_PATH =
+        "https://esm.sh/@excalidraw/excalidraw@0.18.0/dist/prod/";
+    </script>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.3.1",
+          "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+          "@excalidraw/excalidraw": "https://esm.sh/@excalidraw/excalidraw@0.18.0?bundle",
+          "@excalidraw/excalidraw/index.css": "https://esm.sh/@excalidraw/excalidraw@0.18.0/dist/prod/excalidraw.css"
+        }
+      }
+    </script>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      #root { height: 100vh; width: 100vw; }
+      #loading {
+        position: fixed; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18px; color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">Loading Excalidraw…</div>
+    <div id="root"></div>
+
+    <script type="module">
+      import React from "react";
+      import { createRoot } from "react-dom/client";
+      import { Excalidraw } from "@excalidraw/excalidraw";
+
+      const EXCALIDRAW_FILE = "transformers-talk.excalidraw";
+
+      async function loadScene() {
+        try {
+          const resp = await fetch(EXCALIDRAW_FILE);
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const data = await resp.json();
+          return {
+            elements: data.elements || [],
+            appState: {
+              viewBackgroundColor:
+                data.appState?.viewBackgroundColor || "#ffffff",
+            },
+            files: data.files || {},
+            scrollToContent: true,
+          };
+        } catch (err) {
+          console.error("Failed to load .excalidraw file:", err);
+          document.getElementById("loading").textContent =
+            "Error: could not load " +
+            EXCALIDRAW_FILE +
+            ". Make sure view.sh is running from the repo root.";
+          return null;
+        }
+      }
+
+      async function init() {
+        const initialData = await loadScene();
+        if (!initialData) return;
+
+        document.getElementById("loading")?.remove();
+
+        const root = createRoot(document.getElementById("root"));
+        root.render(
+          React.createElement(Excalidraw, {
+            initialData: initialData,
+            viewModeEnabled: true,
+            gridModeEnabled: false,
+            zenModeEnabled: false,
+            UIOptions: {
+              canvasActions: {
+                loadScene: false,
+                saveToActiveFile: false,
+                toggleTheme: false,
+              },
+            },
+          })
+        );
+      }
+
+      init();
+    </script>
+  </body>
+</html>
