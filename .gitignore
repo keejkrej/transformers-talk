@@ -3,3 +3,9 @@
 
 # Local virtualenv used for PDF conversion
 .venv/
+
+# Node deps installed on demand by gen_formulas.js
+node_modules/
+
+# macOS metadata
+.DS_Store
